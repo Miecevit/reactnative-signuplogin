@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Logo from './components/Logo.js';
 
 export default function Login( {navigation} ){
 
@@ -38,17 +39,22 @@ export default function Login( {navigation} ){
   
   return(
     <View style={styles.container}>
+
+      <Logo style={styles.loginLogo} />
+      
       <Text style={styles.title}>Giriş</Text>
       <TextInput
         style={styles.input}
         value={email}
         onChangeText={setEmail}
-        placeholder="Mail adresiniz" />
+        placeholder="Mail adresiniz"
+        keyboardType = "email-address"  />
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={setPassword}
-        placeholder="Şifreniz" />
+        placeholder="Şifreniz" 
+        secureTextEntry />
         <Button title="Giriş Yap" onPress = {giris} />
         <TouchableOpacity style={styles.kayitBtn}>
           <Text onPress= {() => navigation.navigate('Signup')}>Hesabın yok mu? Kayıt ol.</Text>
@@ -79,5 +85,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+  },
+  loginLogo:{
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 20,
   },
 })
