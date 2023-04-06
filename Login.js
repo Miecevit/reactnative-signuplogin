@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,63 +6,51 @@ import {
   Button,
   StyleSheet,
   Alert,
-  TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Logo from './components/Logo.js';
 
-export default function Login( {navigation} ){
-
+export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const giris = async () => {
+  const loginUser = async () => {
+    try {
+      // Get the registered user from AsyncStorage.
+      const registeredUser = JSON.parse(await AsyncStorage.getItem('registeredUser'));
 
-    try{
-
-      const kullanici = JSON.parse(await AsyncStorage.getItem('yeniKayit'));
-      console.log(kullanici);
-
-      if(kullanici.email == email && kullanici.password == password){
-        await AsyncStorage.setItem('isLogin', "true");
-        Alert.alert('Giriş Başarılı!', 'Todo listesine yönlendiriliyorsunuz.');
-        navigation.navigate("Todo");
-      }else{
-        Alert.alert('Giriş Başarısız!', 'Hatalı email veya şifre.');
+      if (registeredUser && email === registeredUser.email && password === registeredUser.password) {
+        await AsyncStorage.setItem('user', JSON.stringify({ email, password }));
+        Alert.alert('Login Successful', 'You are now logged in.');
+        navigation.navigate('Portal');
+      } else {
+        Alert.alert('Login Failed', 'Invalid email or password.');
       }
-
-    }catch(error){
-      Alert.alert('Hata', 'Giriş yaparken bir hata olustu.');
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while logging in.');
     }
+  };
 
-  }
-  
-  return(
+  return (
     <View style={styles.container}>
-
-      <Logo style={styles.loginLogo} />
-      
-      <Text style={styles.title}>Giriş</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         value={email}
         onChangeText={setEmail}
-        placeholder="Mail adresiniz"
-        keyboardType = "email-address"  />
+        placeholder="Email"
+      />
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={setPassword}
-        placeholder="Şifreniz" 
-        secureTextEntry />
-        <Button title="Giriş Yap" onPress = {giris} />
-        <TouchableOpacity style={styles.kayitBtn}>
-          <Text onPress= {() => navigation.navigate('Signup')}>Hesabın yok mu? Kayıt ol.</Text>
-        </TouchableOpacity>
+        placeholder="Password"
+        secureTextEntry
+      />
+      <Button title="Login" onPress={loginUser} />
+      <Button title="Signup" onPress={() => navigation.navigate('Signup')} />
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -81,14 +69,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingLeft: 10,
   },
-  kayitBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  loginLogo:{
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 20,
-  },
-})
+});
